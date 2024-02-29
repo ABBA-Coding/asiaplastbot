@@ -22,10 +22,8 @@ class UserRepo(Repository[User]):
         user_name: str | None = None,
         first_name: str | None = None,
         second_name: str | None = None,
-        language_code: str | None = None,
         is_premium: bool | None = False,
         role: Role | None = Role.USER,
-        user_chat: type[Base] = None,
     ) -> None:
         """Insert a new user into the database.
 
@@ -44,10 +42,8 @@ class UserRepo(Repository[User]):
                 user_name=user_name,
                 first_name=first_name,
                 second_name=second_name,
-                language_code=language_code,
                 is_premium=is_premium,
                 role=role,
-                user_chat=user_chat,
             )
         )
 

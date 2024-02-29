@@ -2,8 +2,13 @@
 import logging
 from dataclasses import dataclass
 from os import getenv
+from dotenv import load_dotenv
 
 from sqlalchemy.engine import URL
+
+from src.language.enums import LocaleIdentificationMode, Locales
+
+load_dotenv(override=True)
 
 
 @dataclass
@@ -35,12 +40,12 @@ class DatabaseConfig:
 class RedisConfig:
     """Redis connection variables."""
 
-    db: int = int(getenv('REDIS_DATABASE', 1))
+    db: int = int(getenv('REDIS_DATABASE')) if getenv('REDIS_DATABASE') else None
     """ Redis Database ID """
-    host: str = getenv('REDIS_HOST', 'redis')
+    host: str = getenv('REDIS_HOST', None)
     port: int = int(getenv('REDIS_PORT', 6379))
-    passwd: str | None = getenv('REDIS_PASSWORD')
-    username: str | None = getenv('REDIS_USERNAME')
+    passwd: str | None = getenv('REDIS_PASSWORD', None)
+    username: str | None = getenv('REDIS_USERNAME', None)
     state_ttl: int | None = getenv('REDIS_TTL_STATE', None)
     data_ttl: int | None = getenv('REDIS_TTL_DATA', None)
 
@@ -53,15 +58,25 @@ class BotConfig:
 
 
 @dataclass
+class TranslationsConfig:
+    """Translations configuration"""
+
+    locale_identify_mode = LocaleIdentificationMode.BY_DATABASE
+    default_locale = "uz"
+
+
+@dataclass
 class Configuration:
     """All in one configuration's class."""
 
     debug = bool(getenv('DEBUG'))
     logging_level = int(getenv('LOGGING_LEVEL', logging.INFO))
+    default_locale = Locales.UZ
 
     db = DatabaseConfig()
     redis = RedisConfig()
     bot = BotConfig()
+    translate = TranslationsConfig()
 
 
 conf = Configuration()

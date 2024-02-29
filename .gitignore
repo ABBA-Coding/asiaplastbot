@@ -90,6 +90,7 @@ celerybeat.pid
 tests.env
 .venv
 *.env
+.env.prod
 !.env.dist
 env/
 venv/
@@ -106,3 +107,6 @@ dmypy.json
 .pyre/
 .pytype/
 cython_debug/
+
+
+*.png

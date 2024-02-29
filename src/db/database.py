@@ -6,7 +6,10 @@ from sqlalchemy.ext.asyncio import create_async_engine as _create_async_engine
 
 from src.configuration import conf
 
-from .repositories import ChatRepo, UserRepo
+from .repositories import (
+    UserRepo, SellerRepo, ClientRepo, 
+    ProductRepo, CashbackRepo, AllowedRepo
+)
 
 
 def create_async_engine(url: URL | str) -> AsyncEngine:
@@ -26,9 +29,11 @@ class Database:
     """
 
     user: UserRepo
-    """ User repository """
-    chat: ChatRepo
-    """ Chat repository """
+    seller: SellerRepo
+    client: ClientRepo
+    product: ProductRepo
+    cachback: CashbackRepo
+    allowed: AllowedRepo
 
     session: AsyncSession
 
@@ -36,14 +41,20 @@ class Database:
         self,
         session: AsyncSession,
         user: UserRepo = None,
-        chat: ChatRepo = None,
+        seller: SellerRepo = None,
+        client: ClientRepo = None,
+        product: ProductRepo = None,
+        cashback: CashbackRepo = None,
+        allowed: AllowedRepo = None,
     ):
         """Initialize Database class.
 
         :param session: AsyncSession to use
-        :param user: (Optional) User repository
-        :param chat: (Optional) Chat repository
         """
         self.session = session
         self.user = user or UserRepo(session=session)
-        self.chat = chat or ChatRepo(session=session)
+        self.seller = seller or SellerRepo(session=session)
+        self.client = client or ClientRepo(session=session)
+        self.product = product or ProductRepo(session=session)
+        self.cashback = cashback or CashbackRepo(session=session)
+        self.allowed = allowed or AllowedRepo(session=session)

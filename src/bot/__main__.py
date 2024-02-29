@@ -7,13 +7,15 @@ from redis.asyncio.client import Redis
 
 from src.bot.dispatcher import get_dispatcher, get_redis_storage
 from src.bot.structures.data_structure import TransferData
+from src.cache import Cache
 from src.configuration import conf
 from src.db.database import create_async_engine
-
+from src.language.translator import Translator
 
 async def start_bot():
     """This function will start bot with polling mode."""
     bot = Bot(token=conf.bot.token)
+    cache = Cache()
     storage = get_redis_storage(
         redis=Redis(
             db=conf.redis.db,
@@ -29,8 +31,11 @@ async def start_bot():
         bot,
         allowed_updates=dp.resolve_used_update_types(),
         **TransferData(
-            engine=create_async_engine(url=conf.db.build_connection_str())
-        )
+            engine=create_async_engine(url=conf.db.build_connection_str()),
+            cache=cache
+        ),
+        translator=Translator(), 
+
     )
 
 

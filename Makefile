@@ -31,7 +31,6 @@ lint: blue isort ruff mypy
 
 .PHONY: run
 run:
-	migrate
 	poetry run python -m src.bot
 
 # Poetry and environments utils
@@ -47,19 +46,17 @@ requirements:
 # Alembic utils
 .PHONY: generate
 generate:
-	source .env
 	poetry run alembic revision --m="$(NAME)" --autogenerate
 
 .PHONY: migrate
 migrate:
-	source .env
 	poetry run alembic upgrade head
 
 # Docker utils
 .PHONY: project-start
 project-start:
-	docker-compose up --force-recreate ${MODE}
+	sudo docker-compose up --force-recreate ${MODE}
 
 .PHONY: project-stop
 project-stop:
-	docker-compose down --remove-orphans ${MODE}
+	sudo docker-compose down --remove-orphans ${MODE}
