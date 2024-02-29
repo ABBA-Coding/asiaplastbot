@@ -1,6 +1,6 @@
 """Seller repository file."""
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.structures.role import Role
@@ -34,8 +34,12 @@ class SellerRepo(Repository[Seller]):
             )
         )
 
-    # async def get_role(self, seller_id: int) -> Role:
-    #     """Get Seller role by id."""
-    #     return await self.session.scalar(
-    #         select(Seller.role).where(Seller.Seller_id == Seller_id).limit(1)
-    #     )
+    async def get_me(self, user_id: int):
+        """Get Seller by user_id."""
+        return await self.session.scalar(
+            select(Seller).where(Seller.user_id == user_id).limit(1)
+        )
+    
+    async def edit(self, user_id: int, **data):
+        stmt = update(Seller).where(Seller.user_id == user_id).values(**data)
+        await self.session.execute(stmt)

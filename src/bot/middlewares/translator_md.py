@@ -38,6 +38,8 @@ class TranslatorMiddleware(BaseMiddleware):
             if await cache.exists(locale_key):
                 # If any locale key were set then use it
                 locale = await cache.get(locale_key)
-            data["translator"] = translator(language=locale.decode())
+            data["translator"] = translator(
+                language=locale.decode() if isinstance(locale, bytes) else locale
+            )
 
             return await handler(event, data)

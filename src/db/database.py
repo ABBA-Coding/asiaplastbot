@@ -32,7 +32,7 @@ class Database:
     seller: SellerRepo
     client: ClientRepo
     product: ProductRepo
-    cachback: CashbackRepo
+    cashback: CashbackRepo
     allowed: AllowedRepo
 
     session: AsyncSession

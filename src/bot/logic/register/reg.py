@@ -10,6 +10,7 @@ from src.language.translator import LocaleScheme, LocalizedTranslator
 from .router import register_router
 from ...structures.fsm.registration import RegisterGroup
 from ...structures.keyboards import common
+from ...utils.formatters import price_formatter
 
 
 @register_router.message(F.text.in_({"🇺🇿 O'zbek", "🇷🇺 Русский"}), RegisterGroup.lang)
@@ -50,10 +51,37 @@ async def process_registration(message: Message, state: FSMContext, translator: 
 
 
 @register_router.message(F.contact, RegisterGroup.phone_number)
-async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator):
+async def process_registration(
+    message: Message, 
+    state: FSMContext, 
+    translator: LocalizedTranslator,
+    db: Database
+):
     await state.update_data({
         'phone_number': message.contact.phone_number
     })
+
+    data = await state.get_data()
+    deep_link = data.get("deep_link")
+
+    if deep_link:
+        product = await db.product.get_product_by_check_id(deep_link)
+        await db.product.edit(
+            check_id=deep_link,
+            status=True
+        )
+        print(product.price)
+        await message.answer(
+            translator.get(
+                "congrats", 
+                price=price_formatter(product.price),
+                check_id=product.check_id
+            ),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        await db.session.commit()
+        return
+
     await state.set_state(RegisterGroup.region)
     return await message.answer(
         translator.get("region"),

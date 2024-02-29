@@ -3,7 +3,7 @@ import abc
 from typing import Generic, TypeVar
 from collections.abc import Sequence
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import Base
@@ -47,7 +47,7 @@ class Repository(Generic[AbstractModel]):
         return (await self.session.execute(statement)).one_or_none()
 
     async def get_many(
-        self, whereclause, limit: int = 100, order_by=None
+        self, whereclause, limit: int = None, order_by=None
     ) -> Sequence[Base]:
         """Get many models from the database with whereclause.
 
@@ -60,9 +60,12 @@ class Repository(Generic[AbstractModel]):
 
         :return: List of founded models
         """
-        statement = select(self.type_model).where(whereclause).limit(limit)
+        statement = select(self.type_model).where(whereclause)
+        
+        if limit:
+            statement = statement.limit(limit)
         if order_by:
-            statement = statement.order_by(order_by)
+            statement = statement.order_by(desc(order_by))
 
         return (await self.session.scalars(statement)).all()
 

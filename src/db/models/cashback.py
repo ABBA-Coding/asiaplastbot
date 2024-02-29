@@ -21,7 +21,7 @@ class Cashback(Base):
         sa.Boolean, unique=False, nullable=False
     )
     seller_id: Mapped[int] = mapped_column(
-        sa.ForeignKey('seller.id', ondelete='CASCADE'),
+        sa.ForeignKey('seller.user_id', ondelete='CASCADE'),
         unique=False,
         nullable=True,
     )

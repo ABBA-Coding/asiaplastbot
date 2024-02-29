@@ -53,7 +53,7 @@ def category():
         [types.KeyboardButton(text="Keshbeklar tarixi")],
         [types.KeyboardButton(text="Aloqa")],
         [types.KeyboardButton(text="Feedback")],
-        [types.KeyboardButton(text="Sozlamalarim")],
+        [types.KeyboardButton(text="Sozlamalar")],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
@@ -64,6 +64,51 @@ def confirm():
     kb = [
         [types.KeyboardButton(text="Tasdiqlash")],
         [types.KeyboardButton(text="Bekor qilish")],
+        [types.KeyboardButton(text="Menyuga qaytish")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
+def back_to_menu():
+    kb = [
+        [types.KeyboardButton(text="Menyuga qaytish")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
+def cashback_history():
+    kb = [
+        [types.KeyboardButton(text="Oxirgi 5 kun")],
+        [types.KeyboardButton(text="Oxirgi 10 kun")],
+        [types.KeyboardButton(text="Oxirgi 30 kun")],
+        [types.KeyboardButton(text="Oxirgi 60 kun")],
+        [types.KeyboardButton(text="Oxirgi 90 kun")],
+        [types.KeyboardButton(text="Barcha sotuvlar")],
+        [types.KeyboardButton(text="Barcha xaridlar")],
+        [types.KeyboardButton(text="Menyuga qaytish")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
+def show_settings():
+    kb = [
+        [types.KeyboardButton(text="Ism o'zgartirish")],
+        [types.KeyboardButton(text="Hududni o'zgartirish")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
+def back_to_settings():
+    kb = [
+        [types.KeyboardButton(text="Sozlamalarga qaytish")],
         [types.KeyboardButton(text="Menyuga qaytish")],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)

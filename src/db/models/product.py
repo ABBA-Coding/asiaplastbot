@@ -17,8 +17,17 @@ class Product(Base):
     check_id: Mapped[int] = mapped_column(
         sa.BigInteger, unique=True, nullable=False
     )
+    qr_image_path: Mapped[str] = mapped_column(
+        sa.Text, unique=False, nullable=False
+    )
+    qr_image_file_id: Mapped[str] = mapped_column(
+        sa.Text, unique=False, nullable=False
+    )
+    status: Mapped[bool] = mapped_column(
+        sa.Boolean, unique=False, nullable=False
+    )
     seller_id: Mapped[int] = mapped_column(
-        sa.ForeignKey('seller.id', ondelete='CASCADE'),
+        sa.ForeignKey('seller.user_id', ondelete='CASCADE'),
         unique=False,
         nullable=True,
     )

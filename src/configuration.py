@@ -1,5 +1,6 @@
 """This file represents configurations from files and environment."""
 import logging
+from pathlib import Path
 from dataclasses import dataclass
 from os import getenv
 from dotenv import load_dotenv
@@ -77,6 +78,8 @@ class Configuration:
     redis = RedisConfig()
     bot = BotConfig()
     translate = TranslationsConfig()
+
+    MEDIA_URL = Path(__file__).parent / "media/images"
 
 
 conf = Configuration()

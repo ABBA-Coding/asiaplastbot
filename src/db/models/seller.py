@@ -16,7 +16,7 @@ class Seller(Base):
     """Seller model."""
 
     user_id: Mapped[int] = mapped_column(
-        sa.BigInteger, unique=True, nullable=False
+        sa.BigInteger, unique=True, nullable=False, primary_key=True
     )
     fullname: Mapped[str] = mapped_column(
         sa.Text, unique=False, nullable=False
