@@ -114,3 +114,12 @@ def back_to_settings():
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
     return keyboard
+
+
+def admin_dashboard():
+    kb = [
+        [types.KeyboardButton(text="Sotuvchini qo'shish")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard

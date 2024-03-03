@@ -15,7 +15,7 @@ class Client(Base):
     """Client model."""
 
     user_id: Mapped[int] = mapped_column(
-        sa.BigInteger, unique=True, nullable=False
+        sa.BigInteger, unique=True, nullable=False, index=True
     )
     fullname: Mapped[str] = mapped_column(
         sa.Text, unique=False, nullable=False

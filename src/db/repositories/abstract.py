@@ -47,7 +47,7 @@ class Repository(Generic[AbstractModel]):
         return (await self.session.execute(statement)).one_or_none()
 
     async def get_many(
-        self, whereclause, limit: int = None, order_by=None
+        self, whereclause = None, limit: int = None, order_by=None
     ) -> Sequence[Base]:
         """Get many models from the database with whereclause.
 

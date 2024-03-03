@@ -1,7 +1,7 @@
 """Cashback model file."""
 import datetime
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from typing import Annotated, Optional
 
@@ -25,4 +25,9 @@ class Cashback(Base):
         unique=False,
         nullable=True,
     )
+    seller = relationship("Seller", back_populates="cashbacks", lazy="joined")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
+
+
+    def __str__(self):
+        return "Keshbeklar"

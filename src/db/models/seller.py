@@ -32,6 +32,10 @@ class Seller(Base):
         'Product', uselist=False, lazy='joined'
     )
     cashbacks: Mapped[Cashback] = orm.relationship(
-        'Cashback', uselist=False, lazy='joined'
+        'Cashback', uselist=False, lazy='joined', back_populates="seller"
     )
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
+
+
+    def __str__(self):
+        return self.fullname

@@ -23,3 +23,9 @@ class AllowedRepo(Repository[AllowedSeller]):
                 phone_number=phone_number,
             )
         )
+
+    async def get_allowed_sellers(self):
+        all_data = await super().get_many()
+        
+        res = [obj.phone_number for obj in all_data if obj]
+        return res

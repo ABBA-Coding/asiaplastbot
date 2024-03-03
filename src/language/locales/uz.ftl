@@ -14,6 +14,7 @@ confirm = so'mlik haridni tasdiqlaysizmi?
 
 cashback_history_period = Sotuv davrini tanlang
 not_sold_yet = Hozircha sotilgan tovarlar yo'q.
+no_cashbacks = Hozircha keshbeklar mavjud emas.
 
 sum_of_cashback =   Umumiy keshbek summasi:
                     { $price } so'm
@@ -32,7 +33,6 @@ region_changed = Hudud o'zgartirildi!
 feedback = Iltimos habaringizni yozing
 thank_you_for_feedback = Bildirgan fikringiz uchun raxmat!
 congrats =  Siz aksiya ishtirokchisiga aylandingiz!!!
-            Xarid summasi { $price } so'm
+            Xarid summasi: { $price } so'm
             Xarid ID si: { NUMBER( $check_id, useGrouping: 0 ) }
-            Aksiyada yutish imkoniyatini ko'paytirish uchun
-            yana ASIA Plast mahsulotlaridan xarid qiling.
+            Aksiyada yutish imkoniyatini ko'paytirish uchun yana ASIA Plast mahsulotlaridan xarid qiling.

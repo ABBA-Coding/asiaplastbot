@@ -79,7 +79,12 @@ class Configuration:
     bot = BotConfig()
     translate = TranslationsConfig()
 
-    MEDIA_URL = Path(__file__).parent / "media/images"
+    MEDIA_URL = Path(__file__).parent / "media"
 
+    ADMINS = list(map(int, getenv("ADMINS").split(',')))
+    SECRET_KEY: str = getenv('SECRET_KEY')
+    ADMIN_LOGIN = getenv('ADMIN_LOGIN')
+    ADMIN_PASSWORD = getenv('ADMIN_PASSWORD')
+    
 
 conf = Configuration()

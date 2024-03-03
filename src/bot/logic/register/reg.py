@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from src.cache import Cache
+from src.configuration import conf
 from src.db.database import Database
 from src.language.translator import LocaleScheme, LocalizedTranslator
 from .router import register_router
@@ -57,12 +58,14 @@ async def process_registration(
     translator: LocalizedTranslator,
     db: Database
 ):
+    phone_number = message.contact.phone_number if message.contact.phone_number.startswith('+') else f"+{message.contact.phone_number}"
     await state.update_data({
-        'phone_number': message.contact.phone_number
+        'phone_number': phone_number
     })
 
     data = await state.get_data()
     deep_link = data.get("deep_link")
+    allowed_sellers = await db.allowed.get_allowed_sellers()
 
     if deep_link:
         product = await db.product.get_product_by_check_id(deep_link)
@@ -70,17 +73,36 @@ async def process_registration(
             check_id=deep_link,
             status=True
         )
-        print(product.price)
-        await message.answer(
-            translator.get(
+
+        await db.client.add_or_update(
+            user_id=message.from_user.id,
+            fullname=data.get("fullname"),
+            phone_number=data.get("phone_number"),
+            language=data.get("language"),
+            product_id=data.get("product_id"),
+        )
+
+        logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
+
+        image_from_pc = types.FSInputFile(logo_path)
+        logo_img = await message.answer_photo(
+            image_from_pc,
+            caption=translator.get(
                 "congrats", 
                 price=price_formatter(product.price),
                 check_id=product.check_id
             ),
             reply_markup=types.ReplyKeyboardRemove()
         )
+        
         await db.session.commit()
         return
+    
+    elif phone_number not in allowed_sellers:
+        return await message.answer(
+            "Siz sotuvchilar ro'yhatida yo'qsiz.",
+            reply_markup = types.ReplyKeyboardRemove()
+        )
 
     await state.set_state(RegisterGroup.region)
     return await message.answer(

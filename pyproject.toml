@@ -20,6 +20,10 @@ python-dotenv = "^1.0.1"
 environs = "^10.3.0"
 fluentogram = "^1.1.6"
 qrcode = "^7.4.2"
+sqladmin = "^0.16.1"
+fastapi = "^0.110.0"
+uvicorn = "^0.27.1"
+itsdangerous = "^2.1.2"
 
 [tool.poetry.group.dev]
 optional=true

@@ -33,3 +33,5 @@ class Product(Base):
     )
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
+    def __str__(self):
+        return "Tovarlar"

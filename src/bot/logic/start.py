@@ -17,6 +17,8 @@ start_router = Router(name='start')
 @start_router.message(CommandStart(), RegisterFilter())
 async def start_handler(message: types.Message, db: Database, translator: LocalizedTranslator, state: FSMContext):
     """Start command handler."""
+    await state.clear()
+
     try:
         await db.user.new(
             user_id=message.from_user.id,
@@ -27,14 +29,20 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
         )
         await db.session.commit()
     except IntegrityError:
+        await db.session.rollback()
         print("User already exists")
 
     texts = message.text.split()
-    if len(texts) == 2:
-        print(texts[1])
-        await state.update_data({
-            'deep_link': int(texts[1]) if texts[1].isdigit() else None
-        })
+    print(message.text)
+
+    if len(texts) == 2 and texts[1].isdigit():
+        product = await db.product.get_product_by_check_id(int(texts[1]))
+
+        if product:
+            await state.update_data({
+                'deep_link': int(texts[1]),
+                'product_id': product.id
+            })
         
     await state.set_state(RegisterGroup.lang)
     await message.answer(
@@ -51,9 +59,6 @@ async def restart_handler(
     state: FSMContext
 ):
     """Start command handler."""
-
-    print(message.text)
-
     await message.answer(
         translator.get("menu"),
         reply_markup=common.category()

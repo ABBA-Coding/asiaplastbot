@@ -72,7 +72,7 @@ async def process_registration(
         me = await bot.me()
         random_number = random.randint(10000000, 99999999)
         img = qrcode.make(f"https://t.me/{me.username}?start={random_number}")
-        img_path = conf.MEDIA_URL / f"{random_number}.png"
+        img_path = conf.MEDIA_URL / f"images/{random_number}.png"
         img.save(str(img_path))
 
         image_from_pc = FSInputFile(img_path)
@@ -145,11 +145,16 @@ async def process_registration(
 ):
     delta = lambda x: datetime.utcnow() - timedelta(days=x)
     
+    # TODO add check for empty list
     if message.text.startswith("Oxirgi") and len(message.text.split()) == 3:
         words = message.text.split()
         if words[1].isdigit():
             x_days_ago = delta(int(words[1]))
             cashbacks = await db.cashback.get_last_cashbacks(message.from_user.id, x_days_ago)
+
+            if not cashbacks:
+                return await message.answer(translator.get("no_cashbacks"))
+            
             formatted_data = "\n".join([
                 f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
                     for num, cashback in enumerate(cashbacks, start=1)
@@ -175,7 +180,13 @@ async def process_registration(
                 for num, cashback in enumerate(cashbacks, start=1)
         ])
         await message.answer(formatted_data) 
-
+    
+    elif message.text == "Menyuga qaytish":
+        await message.answer(
+            translator.get("category"),
+            reply_markup=common.category()
+        )
+        await state.clear()
 
 @seller_router.message(F.text=="Menyuga qaytish")
 async def process_registration(

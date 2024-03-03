@@ -3,5 +3,6 @@ from .help import help_router
 from .start import start_router
 from .register import register_router
 from .seller import seller_router
+from .admin import admin_router
 
-routers = (start_router, help_router, register_router, seller_router,)
+routers = (start_router, help_router, register_router, seller_router, admin_router,)

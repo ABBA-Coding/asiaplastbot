@@ -9,7 +9,11 @@ def price_formatter(num: int):
 
 
 def date_formatter(date: str):
-    original_datetime = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    try:
+        original_datetime = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        original_datetime = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+
     original_datetime_utc = original_datetime.replace(tzinfo=pytz.UTC)
 
     # Convert to Asia/Tashkent time zone
