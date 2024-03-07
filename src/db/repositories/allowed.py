@@ -25,7 +25,8 @@ class AllowedRepo(Repository[AllowedSeller]):
         )
 
     async def get_allowed_sellers(self):
-        all_data = await super().get_many()
+        stmt = select(self.type_model)
+        all_data = (await self.session.scalars(stmt)).all()
         
         res = [obj.phone_number for obj in all_data if obj]
         return res

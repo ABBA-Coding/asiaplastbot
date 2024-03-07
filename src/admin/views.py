@@ -1,10 +1,15 @@
 from fastapi import Request
-from sqladmin import ModelView
+from sqlalchemy import select, func
+from sqladmin import ModelView, BaseView, expose
+
+from .settings import Session
 
 from ..db.models import (
     User, Seller, AllowedSeller, 
-    Client, Product, Cashback,
+    Client, Product, Cashback, 
+    Purchase, Feedback,
 )
+
 
 
 class UserAdmin(ModelView, model=User):
@@ -25,8 +30,8 @@ class UserAdmin(ModelView, model=User):
 class SellerAdmin(ModelView, model=Seller):
     column_list = [
         Seller.fullname, Seller.phone_number,
-        Seller.phone_number, Seller.language, 
-        Seller.products, Seller.created_at
+        Seller.language, Seller.products, 
+        Seller.created_at
     ]
     icon = "fa-solid fa-users"
     name_plural = "Sotuvchilar"
@@ -71,10 +76,31 @@ class ProductAdmin(ModelView, model=Product):
     column_list = [
         Product.price, Product.check_id,
         Product.seller_id, Product.status,
-        Product.created_at,
+        Product.seller, Product.created_at,
     ]
+
+    column_details_list = [
+        Product.price, Product.check_id,
+        Product.seller_id, Product.status,
+        Product.seller, Product.created_at,
+    ]
+
     icon = "fa-solid fa-store"
     name_plural = "Tovarlar"
+    
+    def is_visible(self, request: Request) -> bool:
+        return True
+
+    def is_accessible(self, request: Request) -> bool:
+        return True
+    
+
+class PurchaseAdmin(ModelView, model=Purchase):
+    column_list = [
+        Purchase.product, Purchase.client, Purchase.region
+    ]
+    icon = "fa-solid fa-cart-shopping"
+    name_plural = "Haridlar"
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -98,3 +124,45 @@ class CashbackAdmin(ModelView, model=Cashback):
 
     def is_accessible(self, request: Request) -> bool:
         return True
+
+
+class FeedbackAdmin(ModelView, model=Feedback):
+    column_list = [
+        Feedback.message, Feedback.user,
+    ]
+
+    icon = "fa-solid fa-comment"
+    name_plural = "Fikrlar"
+    
+    def is_visible(self, request: Request) -> bool:
+        return True
+
+    def is_accessible(self, request: Request) -> bool:
+        return True
+
+
+class ReportView(BaseView):
+    name = "Hisobot"
+    icon = "fa-solid fa-chart-line"
+
+    @expose("/report", methods=["GET"])
+    async def report_page(self, request):
+        async with Session(expire_on_commit=False) as session:
+            stmt = select(Purchase.region, func.count().label('region_count')).group_by(Purchase.region)
+            result = await session.execute(stmt)
+            rows = result.fetchall()
+
+            stmt = select(func.count(Purchase.region))
+            result = await session.execute(stmt)
+            region_count = result.scalar_one()
+
+            regions = [{'name': n, 'count': c} for n, c in rows]
+
+        return await self.templates.TemplateResponse(
+            request,
+            "report.html",
+            context={
+                "regions": regions,
+                "region_count": region_count,
+            },
+        )

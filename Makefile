@@ -33,6 +33,10 @@ lint: blue isort ruff mypy
 run:
 	poetry run python -m src.bot
 
+.PHONY: admin-run
+admin-run:
+	poetry run python -m uvicorn src.admin.main:app --reload
+
 # Poetry and environments utils
 REQUIREMENTS_FILE := requirements.txt
 

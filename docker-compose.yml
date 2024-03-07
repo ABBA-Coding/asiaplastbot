@@ -17,7 +17,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: on-failure
     ports:
-      - "5432:5432"
+      - "3779:5432"
   bot:
     build:
       context: .

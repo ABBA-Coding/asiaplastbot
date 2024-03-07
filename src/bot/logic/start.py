@@ -24,7 +24,7 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
             user_id=message.from_user.id,
             user_name=message.from_user.username,
             first_name=message.from_user.first_name,
-            second_name=message.from_user.first_name,
+            second_name=message.from_user.last_name,
             is_premium=bool(message.from_user.is_premium),
         )
         await db.session.commit()
@@ -41,7 +41,8 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
         if product:
             await state.update_data({
                 'deep_link': int(texts[1]),
-                'product_id': product.id
+                'product_id': product.id,
+                'region': product.seller.region,
             })
         
     await state.set_state(RegisterGroup.lang)

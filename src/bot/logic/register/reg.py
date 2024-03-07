@@ -67,6 +67,9 @@ async def process_registration(
     deep_link = data.get("deep_link")
     allowed_sellers = await db.allowed.get_allowed_sellers()
 
+    print(phone_number, allowed_sellers)
+    print(phone_number in allowed_sellers)
+    
     if deep_link:
         product = await db.product.get_product_by_check_id(deep_link)
         await db.product.edit(
@@ -80,6 +83,12 @@ async def process_registration(
             phone_number=data.get("phone_number"),
             language=data.get("language"),
             product_id=data.get("product_id"),
+        )
+
+        await db.purchase.new(
+            product_id=data.get("product_id"),
+            client_id=message.from_user.id,
+            region=data.get("region"),
         )
 
         logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
@@ -97,7 +106,7 @@ async def process_registration(
         
         await db.session.commit()
         return
-    
+
     elif phone_number not in allowed_sellers:
         return await message.answer(
             "Siz sotuvchilar ro'yhatida yo'qsiz.",

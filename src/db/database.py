@@ -7,8 +7,10 @@ from sqlalchemy.ext.asyncio import create_async_engine as _create_async_engine
 from src.configuration import conf
 
 from .repositories import (
-    UserRepo, SellerRepo, ClientRepo, 
-    ProductRepo, CashbackRepo, AllowedRepo
+    UserRepo, SellerRepo, 
+    ClientRepo, ProductRepo, 
+    CashbackRepo, AllowedRepo,
+    PurchaseRepo, FeedbackRepo,
 )
 
 
@@ -34,6 +36,8 @@ class Database:
     product: ProductRepo
     cashback: CashbackRepo
     allowed: AllowedRepo
+    purchase: PurchaseRepo
+    feedback: FeedbackRepo
 
     session: AsyncSession
 
@@ -46,6 +50,8 @@ class Database:
         product: ProductRepo = None,
         cashback: CashbackRepo = None,
         allowed: AllowedRepo = None,
+        purchase: PurchaseRepo = None,
+        feedback: FeedbackRepo = None,
     ):
         """Initialize Database class.
 
@@ -58,3 +64,5 @@ class Database:
         self.product = product or ProductRepo(session=session)
         self.cashback = cashback or CashbackRepo(session=session)
         self.allowed = allowed or AllowedRepo(session=session)
+        self.purchase = purchase or PurchaseRepo(session=session)
+        self.feedback = feedback or FeedbackRepo(session=session)

@@ -3,9 +3,10 @@ import datetime
 import sqlalchemy as sa
 
 from typing import Annotated, Optional
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from src.db.models.purchase import Purchase
 
 
 class Product(Base):
@@ -31,7 +32,11 @@ class Product(Base):
         unique=False,
         nullable=True,
     )
+    purchases: Mapped[Purchase] = relationship(
+        'Purchase', uselist=False, lazy='joined', back_populates="product"
+    )
+    seller = relationship("Seller", back_populates="products", lazy="joined")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
     def __str__(self):
-        return "Tovarlar"
+        return "Tovar"

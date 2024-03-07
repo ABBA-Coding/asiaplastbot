@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
 
-import uvicorn
-from typing import Optional
-
 from fastapi import FastAPI
 from sqladmin import Admin
 
 from .auth import AdminAuth
+from .settings import engine
 from ..configuration import conf
 
-from ..db.database import create_async_engine
 from .views import (
     UserAdmin, SellerAdmin, AllowedSellerAdmin,
-    ClientAdmin, ProductAdmin, CashbackAdmin,
+    ClientAdmin, ProductAdmin, CashbackAdmin, 
+    ReportView, PurchaseAdmin, FeedbackAdmin, 
 )
 
 app = FastAPI()
-engine = create_async_engine(conf.db.build_connection_str())
 authentication_backend = AdminAuth(secret_key=conf.SECRET_KEY)
-admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend)
+admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, templates_dir='src/admin/templates')
 
 
 admin.add_view(UserAdmin)
@@ -27,7 +24,6 @@ admin.add_view(AllowedSellerAdmin)
 admin.add_view(ClientAdmin)
 admin.add_view(ProductAdmin)
 admin.add_view(CashbackAdmin)
-
-
-# if __name__ == "__main__":
-#     uvicorn.run(app="main:app", reload=True)
+admin.add_view(PurchaseAdmin)
+admin.add_view(FeedbackAdmin)
+admin.add_view(ReportView)

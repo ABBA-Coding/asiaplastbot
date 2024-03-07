@@ -220,7 +220,8 @@ async def process_registration(
 ):
     await state.set_state(FeedbackGroup.message)
     return await message.answer(
-        translator.get("feedback")
+        translator.get("feedback"),
+        reply_markup=types.ReplyKeyboardRemove()
     )
 
 
@@ -229,7 +230,14 @@ async def process_registration(
     message: Message, 
     state: FSMContext, 
     translator: LocalizedTranslator,
+    db: Database,
 ):
+    await db.feedback.new(
+        message=message.text,
+        user_id=message.from_user.id,
+    )
+    await db.session.commit()
+
     await message.answer(
         translator.get("thank_you_for_feedback"),
         reply_markup=common.category()

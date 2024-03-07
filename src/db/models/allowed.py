@@ -8,4 +8,4 @@ from .base import Base
 class AllowedSeller(Base):
     """AllowedSeller model."""
 
-    phone_number: Mapped[str] = mapped_column(sa.Text, unique=False, nullable=True)
+    phone_number: Mapped[str] = mapped_column(sa.String(length=20), unique=False, nullable=True)
