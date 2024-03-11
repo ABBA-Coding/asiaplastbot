@@ -1,6 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 
-from aiogram import F, types
+from aiogram import F, types, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
@@ -56,7 +56,8 @@ async def process_registration(
     message: Message, 
     state: FSMContext, 
     translator: LocalizedTranslator,
-    db: Database
+    db: Database,
+    bot: Bot
 ):
     phone_number = message.contact.phone_number if message.contact.phone_number.startswith('+') else f"+{message.contact.phone_number}"
     await state.update_data({
@@ -66,9 +67,8 @@ async def process_registration(
     data = await state.get_data()
     deep_link = data.get("deep_link")
     allowed_sellers = await db.allowed.get_allowed_sellers()
-
-    print(phone_number, allowed_sellers)
-    print(phone_number in allowed_sellers)
+    seller_id = data.get("seller_id")
+    seller = await db.seller.get_me(user_id=seller_id)
     
     if deep_link:
         product = await db.product.get_product_by_check_id(deep_link)
@@ -88,7 +88,7 @@ async def process_registration(
         await db.purchase.new(
             product_id=data.get("product_id"),
             client_id=message.from_user.id,
-            region=data.get("region"),
+            region=seller.region,
         )
 
         logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
@@ -102,6 +102,17 @@ async def process_registration(
                 check_id=product.check_id
             ),
             reply_markup=types.ReplyKeyboardRemove()
+        )
+
+        cashback = data.get("price") / 100
+        all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=seller_id)
+        sum_of_cashbacks = sum(all_data) / 100
+
+        await bot.send_message(
+            seller_id,
+            f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
+            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)}",
+            reply_markup=common.back_to_menu()
         )
         
         await db.session.commit()

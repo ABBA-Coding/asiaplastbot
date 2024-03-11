@@ -42,7 +42,9 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
             await state.update_data({
                 'deep_link': int(texts[1]),
                 'product_id': product.id,
-                'region': product.seller.region,
+                # 'region': product.seller.region,
+                'price': product.price,
+                'seller_id': product.seller_id,
             })
         
     await state.set_state(RegisterGroup.lang)

@@ -79,7 +79,8 @@ async def process_registration(
         qr_image = await message.answer_photo(
             image_from_pc,
             caption=f"{price_formatter(data.get('price'))} so'mlik xarid cheki\n"
-                    f"ID: {random_number}"
+                    f"ID: {random_number}",
+            reply_markup=common.back_to_menu()
         )
 
         await db.cashback.new(
@@ -99,14 +100,6 @@ async def process_registration(
         await db.session.commit()
 
         all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=message.from_user.id)
-        sum_of_cashbacks = sum(all_data) // 100
-
-        cashback = data.get("price") // 100
-        await message.answer(
-            f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
-            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)}",
-            reply_markup=common.back_to_menu()
-        )
 
 
 @seller_router.message(F.text=="Mening keshbeklarim")
@@ -116,7 +109,7 @@ async def process_registration(
     db: Database
 ):
     all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=message.from_user.id)
-    sum_of_cashbacks = sum(all_data) // 100
+    sum_of_cashbacks = sum(all_data) / 100
 
     return await message.answer(
         translator.get("sum_of_cashback", price=price_formatter(sum_of_cashbacks))
@@ -159,6 +152,7 @@ async def process_registration(
                 f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
                     for num, cashback in enumerate(cashbacks, start=1)
             ])
+            print("len cashbacks: ", len(cashbacks))
             await message.answer(formatted_data) 
 
     elif message.text == "Barcha sotuvlar":
@@ -179,6 +173,7 @@ async def process_registration(
             f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
                 for num, cashback in enumerate(cashbacks, start=1)
         ])
+        print("len cashbacks: ", len(cashbacks))
         await message.answer(formatted_data) 
     
     elif message.text == "Menyuga qaytish":

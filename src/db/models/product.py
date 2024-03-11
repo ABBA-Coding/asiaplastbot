@@ -35,7 +35,7 @@ class Product(Base):
     purchases: Mapped[Purchase] = relationship(
         'Purchase', uselist=False, lazy='joined', back_populates="product"
     )
-    seller = relationship("Seller", back_populates="products", lazy="joined")
+    seller = relationship("Seller", back_populates="products")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
     def __str__(self):
