@@ -18,7 +18,7 @@ services:
     restart: on-failure
     ports:
       - "3779:5432"
-  bot:
+  bot: &bot
     build:
       context: .
       dockerfile: buildfiles/Dockerfile
@@ -28,8 +28,14 @@ services:
     depends_on:
       - db
       - redis
+  admin:
+    <<: *bot
+    depends_on:
+      - db
+      - redis
     ports:
-      - "5000:8000"
+      - "8200:8000"
+    command: poetry run python -m uvicorn src.admin.main:app --host 0.0.0.0 --port 8000 --forwarded-allow-ips='*' --proxy-headers
 
 
 volumes:
