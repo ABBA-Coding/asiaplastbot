@@ -33,7 +33,7 @@ Apply migrations to the target database
 Run a bot \
 `make run`
 
-Run a admin panel \
+Run an admin panel \
 `make admin-run`
 
 Run via Docker container \
