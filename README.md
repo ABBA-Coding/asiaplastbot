@@ -29,11 +29,12 @@ Generate alembic revision for migration with given name
 `make migrate` \
 Apply migrations to the target database
 
----
-## Roadmap
+### Run
+Run a bot \
+`make run`
 
-- Add Github Actions CI/CD
-- Light (simplified) version without docker and CI/CD
-- Highload version with NATS and Docker Swarm
-- More tests kit and update factory
+Run a admin panel \
+`make admin-run`
 
+Run via Docker container \
+`docker compose up -d`
