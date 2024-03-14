@@ -9,6 +9,8 @@ phone_number_kb = Yuborish
 region = Hududni tanlang
 category = Kategoriyani tanlang
 
+not_in_sellers = Siz sotuvchilar ro'yhatida yo'qsiz
+
 price = Xarid summasini kiriting
 confirm = so'mlik haridni tasdiqlaysizmi?
 

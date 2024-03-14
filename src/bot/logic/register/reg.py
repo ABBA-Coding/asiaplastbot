@@ -111,7 +111,7 @@ async def process_registration(
         await bot.send_message(
             seller_id,
             f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
-            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)}",
+            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)} so'm",
             reply_markup=common.back_to_menu()
         )
         
@@ -120,7 +120,7 @@ async def process_registration(
 
     elif phone_number not in allowed_sellers:
         return await message.answer(
-            "Siz sotuvchilar ro'yhatida yo'qsiz.",
+            translator.get("not_in_sellers"),
             reply_markup = types.ReplyKeyboardRemove()
         )
 
