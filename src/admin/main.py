@@ -18,7 +18,7 @@ authentication_backend = AdminAuth(secret_key=conf.SECRET_KEY)
 admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, templates_dir='src/admin/templates')
 
 
-admin.add_view(UserAdmin)
+# admin.add_view(UserAdmin)
 admin.add_view(SellerAdmin)
 admin.add_view(AllowedSellerAdmin)
 admin.add_view(ClientAdmin)
