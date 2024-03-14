@@ -33,6 +33,9 @@ class SellerAdmin(ModelView, model=Seller):
         Seller.language, Seller.products, 
         Seller.created_at
     ]
+    column_searchable_list = [Seller.fullname]
+    can_create = False
+    can_delete = False
     icon = "fa-solid fa-users"
     name_plural = "Sotuvchilar"
     
@@ -47,6 +50,8 @@ class AllowedSellerAdmin(ModelView, model=AllowedSeller):
     column_list = [
         AllowedSeller.phone_number,
     ]
+    column_searchable_list = [AllowedSeller.phone_number]
+
     icon = "fa-solid fa-user-plus"
     name_plural = "Sotuvchi qo'shish"
     
@@ -60,8 +65,10 @@ class AllowedSellerAdmin(ModelView, model=AllowedSeller):
 class ClientAdmin(ModelView, model=Client):
     column_list = [
         Client.fullname, Client.phone_number, 
-        Client.product_id, Client.created_at
+        Client.created_at
     ]
+    column_searchable_list = [Client.fullname]
+    
     icon = "fa-solid fa-users"
     name_plural = "Klientlar"
     
@@ -74,14 +81,14 @@ class ClientAdmin(ModelView, model=Client):
 
 class ProductAdmin(ModelView, model=Product):
     column_list = [
-        Product.price, Product.check_id,
-        Product.seller_id, Product.status,
+        "formatted_price", Product.status,
+        "seller_phone_number",
         Product.seller, Product.created_at,
     ]
 
     column_details_list = [
-        Product.price, Product.check_id,
-        Product.seller_id, Product.status,
+        Product.price, Product.status,
+        "seller_phone_number",
         Product.seller, Product.created_at,
     ]
 
@@ -111,11 +118,12 @@ class PurchaseAdmin(ModelView, model=Purchase):
 
 class CashbackAdmin(ModelView, model=Cashback):
     column_list = [
-        Cashback.price, Cashback.check_id,
-        Cashback.seller_id, Cashback.status,
-        Cashback.seller, Cashback.created_at
+        "formatted_price", "cashback_sum", 
+        Cashback.status, "seller_phone_number",
+        Cashback.seller, Cashback.created_at, 
     ]
-
+    
+    can_create = False
     icon = "fa-solid fa-money-check-dollar"
     name_plural = "Keshbeklar"
     

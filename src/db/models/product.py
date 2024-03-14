@@ -8,6 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from src.db.models.purchase import Purchase
 
+from ...bot.utils.formatters import price_formatter
+
 
 class Product(Base):
     """Product model."""
@@ -38,5 +40,13 @@ class Product(Base):
     seller = relationship("Seller", back_populates="products")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
+    @property
+    def formatted_price(self) -> int:
+        return price_formatter(self.price)
+    
+    @property
+    def seller_phone_number(self) -> str:
+        return f"{self.seller.phone_number}"
+    
     def __str__(self):
         return "Tovar"

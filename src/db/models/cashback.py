@@ -7,6 +7,8 @@ from typing import Annotated, Optional
 
 from .base import Base
 
+from ...bot.utils.formatters import price_formatter
+
 
 class Cashback(Base):
     """Cashback model."""
@@ -28,6 +30,17 @@ class Cashback(Base):
     seller = relationship("Seller", back_populates="cashbacks")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
-
+    @property
+    def formatted_price(self) -> int:
+        return price_formatter(self.price)
+    
+    @property
+    def cashback_sum(self) -> int:
+        return price_formatter(self.price / 100)
+    
+    @property
+    def seller_phone_number(self) -> str:
+        return f"{self.seller.phone_number}"
+    
     def __str__(self):
         return "Keshbeklar"
