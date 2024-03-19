@@ -21,10 +21,10 @@ no_cashbacks = Hozircha keshbeklar mavjud emas.
 sum_of_cashback =   Umumiy keshbek summasi:
                     { $price } so'm
                     Murojat uchun:
-                    +998 95-812-18-12
+                    +998993070307
 
 contacts =  Asia plast botidan foydalanganingiz uchun tashakkur!
-            Murojaat uchun: +998 95-812-18-12
+            Murojaat uchun: +998993070307
 
 seller_info = Ism: { $fullname }
               Hudud: { $region }
