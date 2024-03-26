@@ -1,6 +1,6 @@
 from aiogram import Router
 
-# from src.bot.filters.register_filter import RegisterFilter
+from src.bot.filters.register_filter import SellerFilter
 
 seller_router = Router(name='Seller')
-# seller_router.message.filter(RegisterFilter())
+seller_router.message.filter(SellerFilter())

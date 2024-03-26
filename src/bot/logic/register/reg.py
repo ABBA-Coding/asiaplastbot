@@ -105,14 +105,20 @@ async def process_registration(
         )
 
         cashback = data.get("price") / 100
-        all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=seller_id)
-        sum_of_cashbacks = sum(all_data) / 100
+        all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
+        sum_of_cashbacks = (sum(all_data) + data.get("price")) / 100
 
-        await bot.send_message(
-            seller_id,
+        await message.answer(
             f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
             f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)} so'm",
-            reply_markup=common.back_to_menu()
+            reply_markup=common.client_category()
+        )
+
+        await db.cashback.new(
+            price=data.get("price"),
+            check_id=product.check_id,
+            status=False,
+            client_id=message.from_user.id
         )
         
         await db.session.commit()

@@ -49,11 +49,22 @@ def show_regions():
 def category():
     kb = [
         [types.KeyboardButton(text="Tovar sotish")],
-        [types.KeyboardButton(text="Mening keshbeklarim")],
-        [types.KeyboardButton(text="Keshbeklar tarixi")],
+        # [types.KeyboardButton(text="Mening keshbeklarim")],
+        # [types.KeyboardButton(text="Keshbeklar tarixi")],
+        [types.KeyboardButton(text="Barcha sotuvlar")],
         [types.KeyboardButton(text="Aloqa")],
         [types.KeyboardButton(text="Feedback")],
         [types.KeyboardButton(text="Sozlamalar")],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
+def client_category():
+    kb = [
+        [types.KeyboardButton(text="Mening keshbeklarim")],
+        [types.KeyboardButton(text="Keshbeklar tarixi")],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
@@ -87,13 +98,30 @@ def cashback_history():
         [types.KeyboardButton(text="Oxirgi 30 kun")],
         [types.KeyboardButton(text="Oxirgi 60 kun")],
         [types.KeyboardButton(text="Oxirgi 90 kun")],
-        [types.KeyboardButton(text="Barcha sotuvlar")],
+        # [types.KeyboardButton(text="Barcha sotuvlar")],
         [types.KeyboardButton(text="Barcha xaridlar")],
         [types.KeyboardButton(text="Menyuga qaytish")],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
     return keyboard
+
+
+# def show_sells():
+#     kb = [
+#         [types.KeyboardButton(text="Oxirgi 5 kun")],
+#         [types.KeyboardButton(text="Oxirgi 10 kun")],
+#         [types.KeyboardButton(text="Oxirgi 30 kun")],
+#         [types.KeyboardButton(text="Oxirgi 60 kun")],
+#         [types.KeyboardButton(text="Oxirgi 90 kun")],
+#         [types.KeyboardButton(text="Barcha sotuvlar")],
+#         [types.KeyboardButton(text="Barcha xaridlar")],
+#         [types.KeyboardButton(text="Menyuga qaytish")],
+#     ]
+#     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+#     return keyboard
+ 
 
 
 def show_settings():

@@ -20,32 +20,41 @@ class CashbackRepo(Repository[Cashback]):
         price: int,
         check_id: int,
         status: bool,
-        seller_id: int,
+        client_id: int,
     ) -> None:
         await self.session.merge(
             Cashback(
                 price=price,
                 check_id=check_id,
                 status=status,
-                seller_id=seller_id
+                client_id=client_id
             )
         )
 
-    async def get_cashbacks_by_seller_id(self, seller_id: int):
+    async def get_cashback_by_client_id_and_check_id(self, client_id: int, check_id: int):
+        condition1 = Cashback.client_id == client_id
+        condition2 = Cashback.check_id == check_id
+        whereclause = and_(condition1, condition2)
+
+        return await self.session.scalar(
+            select(Cashback).where(whereclause).limit(1)
+        )
+    
+    async def get_cashbacks_by_client_id(self, client_id: int):
         all_data = await super().get_many(
-            whereclause=Cashback.seller_id == seller_id
+            whereclause=Cashback.client_id == client_id
         )
         res = [obj.price for obj in all_data if obj]
         return res
 
-    async def get_last_cashbacks(self, seller_id: int, delta: datetime = None):
+    async def get_last_cashbacks(self, client_id: int, delta: datetime = None):
         if delta:
-            condition1 = Cashback.seller_id == seller_id
+            condition1 = Cashback.client_id == client_id
             condition2 = Cashback.created_at >= delta
             whereclause = and_(condition1, condition2)
         
         else:
-            whereclause = Cashback.seller_id == seller_id
+            whereclause = Cashback.client_id == client_id
 
         all_data = await super().get_many(
             whereclause=whereclause

@@ -6,6 +6,7 @@ import sqlalchemy.orm as orm
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.db.models.purchase import Purchase
+from src.db.models.cashback import Cashback
 
 from .base import Base
 
@@ -32,6 +33,9 @@ class Client(Base):
     )
     purchases: Mapped[Purchase] = orm.relationship(
         'Purchase', uselist=False, lazy='joined', back_populates="client"
+    )
+    cashbacks: Mapped[Cashback] = orm.relationship(
+        'Cashback', uselist=False, lazy='joined', back_populates="client"
     )
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 

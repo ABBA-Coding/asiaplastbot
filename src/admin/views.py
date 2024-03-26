@@ -119,8 +119,8 @@ class PurchaseAdmin(ModelView, model=Purchase):
 class CashbackAdmin(ModelView, model=Cashback):
     column_list = [
         "formatted_price", "cashback_sum", 
-        Cashback.status, "seller_phone_number",
-        Cashback.seller, Cashback.created_at, 
+        Cashback.status, "client_phone_number",
+        Cashback.client, Cashback.created_at, 
     ]
     
     can_create = False

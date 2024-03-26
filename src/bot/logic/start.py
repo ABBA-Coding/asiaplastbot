@@ -33,7 +33,6 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
         print("User already exists")
 
     texts = message.text.split()
-    print(message.text)
 
     if len(texts) == 2 and texts[1].isdigit():
         product = await db.product.get_product_by_check_id(int(texts[1]))
@@ -55,15 +54,26 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
     )
 
 
-@start_router.message(CommandStart())
-async def restart_handler(
-    message: types.Message, 
-    translator: LocalizedTranslator,
-    state: FSMContext
-):
-    """Start command handler."""
-    await message.answer(
-        translator.get("menu"),
-        reply_markup=common.category()
-    )
-    await state.clear()
+# @start_router.message(CommandStart(deep_link=False))
+# async def restart_handler(
+#     message: types.Message, 
+#     translator: LocalizedTranslator,
+#     state: FSMContext, 
+#     db: Database
+# ):
+#     """Start command handler."""
+#     seller = await db.seller.get_me(message.from_user.id)
+#     client = await db.client.get_me(message.from_user.id)
+
+#     if seller:
+#         await message.answer(
+#             translator.get("menu"),
+#             reply_markup=common.category()
+#         )
+#     elif client:
+#         await message.answer(
+#             translator.get("menu"),
+#             reply_markup=common.client_category()
+#         )
+        
+#     await state.clear()

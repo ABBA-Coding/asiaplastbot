@@ -22,12 +22,12 @@ class Cashback(Base):
     status: Mapped[bool] = mapped_column(
         sa.Boolean, unique=False, nullable=False
     )
-    seller_id: Mapped[int] = mapped_column(
-        sa.ForeignKey('seller.user_id', ondelete='CASCADE'),
+    client_id: Mapped[int] = mapped_column(
+        sa.ForeignKey('client.user_id', ondelete='CASCADE'),
         unique=False,
         nullable=True,
     )
-    seller = relationship("Seller", back_populates="cashbacks")
+    client = relationship("Client", back_populates="cashbacks")
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
     @property
@@ -39,8 +39,8 @@ class Cashback(Base):
         return price_formatter(self.price / 100)
     
     @property
-    def seller_phone_number(self) -> str:
-        return f"{self.seller.phone_number}"
+    def client_phone_number(self) -> str:
+        return f"{self.client.phone_number}"
     
     def __str__(self):
         return "Keshbeklar"

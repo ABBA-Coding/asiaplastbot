@@ -33,6 +33,12 @@ class ClientRepo(Repository[Client]):
             )
         )
 
+    async def get_me(self, user_id: int):
+        """Get Client by user_id."""
+        return await self.session.scalar(
+            select(Client).where(Client.user_id == user_id).limit(1)
+        )
+
     async def add_or_update(self, **kwargs):
         insert_stmt = insert(Client).values(**kwargs)
         do_update_stmt = insert_stmt.on_conflict_do_update(

@@ -31,9 +31,6 @@ class Seller(Base):
     products: Mapped[Product] = orm.relationship(
         'Product', uselist=False, lazy='joined'
     )
-    cashbacks: Mapped[Cashback] = orm.relationship(
-        'Cashback', uselist=False, lazy='joined', back_populates="seller"
-    )
     created_at: Mapped[Optional[Annotated[datetime.datetime, mapped_column(nullable=False, default=datetime.datetime.utcnow)]]]
 
 

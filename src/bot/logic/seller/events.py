@@ -1,22 +1,33 @@
 import random, qrcode
 
 from datetime import datetime, timedelta
-from sqlalchemy.exc import IntegrityError
 
 from aiogram import Bot
 from aiogram import F, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.types import FSInputFile
+from aiogram.filters import CommandStart
 
 from src.cache import Cache
 from src.configuration import conf
 from src.db.database import Database
-from src.language.translator import LocaleScheme, LocalizedTranslator
+from src.language.translator import LocalizedTranslator
 from .router import seller_router
 from ...utils.formatters import price_formatter, date_formatter
 from ...structures.fsm.category import CategoryGroup, CashbackHistoryGroup, SettingsGroup, FeedbackGroup
 from ...structures.keyboards import common
+
+
+@seller_router.message(CommandStart())
+async def restart_handler(
+    message: types.Message, 
+    translator: LocalizedTranslator
+):
+    await message.answer(
+        translator.get("menu"),
+        reply_markup=common.category()
+    )
 
 
 @seller_router.message(F.text=="Tovar sotish")
@@ -83,12 +94,12 @@ async def process_registration(
             reply_markup=common.back_to_menu()
         )
 
-        await db.cashback.new(
-            price=data.get("price"),
-            check_id=random_number,
-            status=False,
-            seller_id=message.from_user.id
-        )
+        # await db.cashback.new(
+        #     price=data.get("price"),
+        #     check_id=random_number,
+        #     status=False,
+        #     seller_id=message.from_user.id
+        # )
         await db.product.new(
             price=data.get("price"),
             check_id=random_number,
@@ -99,34 +110,54 @@ async def process_registration(
         )
         await db.session.commit()
 
-        all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=message.from_user.id)
+        # all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=message.from_user.id)
 
 
-@seller_router.message(F.text=="Mening keshbeklarim")
-async def process_registration(
-    message: Message, 
-    translator: LocalizedTranslator,
-    db: Database
-):
-    all_data = await db.cashback.get_cashbacks_by_seller_id(seller_id=message.from_user.id)
-    sum_of_cashbacks = sum(all_data) / 100
+# @seller_router.message(F.text=="Mening keshbeklarim")
+# async def process_registration(
+#     message: Message, 
+#     translator: LocalizedTranslator,
+#     db: Database
+# ):
+#     all_data = await db.cashback.get_cashbacks_by_client_id(seller_id=message.from_user.id)
+#     sum_of_cashbacks = sum(all_data) / 100
 
-    return await message.answer(
-        translator.get("sum_of_cashback", price=price_formatter(sum_of_cashbacks))
-    )
+#     return await message.answer(
+#         translator.get("sum_of_cashback", price=price_formatter(sum_of_cashbacks))
+    # )
 
 
-@seller_router.message(F.text=="Keshbeklar tarixi")
+# @seller_router.message(F.text=="Keshbeklar tarixi")
+# async def process_registration(
+#     message: Message, 
+#     state: FSMContext, 
+#     translator: LocalizedTranslator,
+# ):
+#     await state.set_state(CashbackHistoryGroup.step1)
+#     return await message.answer(
+#         translator.get("cashback_history_period"),
+#         reply_markup=common.cashback_history()
+#     )
+
+
+@seller_router.message(F.text=="Barcha sotuvlar")
 async def process_registration(
     message: Message, 
     state: FSMContext, 
     translator: LocalizedTranslator,
+    db: Database,
 ):
-    await state.set_state(CashbackHistoryGroup.step1)
-    return await message.answer(
-        translator.get("cashback_history_period"),
-        reply_markup=common.cashback_history()
-    )
+    products = await db.product.get_sold_products(message.from_user.id)
+
+    if not products:
+        return await message.answer(translator.get("not_sold_yet"))
+    
+    formatted_data = "\n".join([
+        f"{num}. {price_formatter(product.price)} chek\nID: {product.check_id}, {date_formatter(str(product.created_at))}" 
+            for num, product in enumerate(products, start=1)
+    ])
+
+    await message.answer(formatted_data) 
 
 
 @seller_router.message(CashbackHistoryGroup.step1)
@@ -182,6 +213,7 @@ async def process_registration(
             reply_markup=common.category()
         )
         await state.clear()
+
 
 @seller_router.message(F.text=="Menyuga qaytish")
 async def process_registration(
