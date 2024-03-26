@@ -1,4 +1,5 @@
-import random, qrcode
+import random
+import qrcode
 
 from datetime import datetime, timedelta
 
@@ -21,8 +22,8 @@ from ...structures.keyboards import common
 
 @seller_router.message(CommandStart())
 async def restart_handler(
-    message: types.Message, 
-    translator: LocalizedTranslator
+        message: types.Message,
+        translator: LocalizedTranslator
 ):
     await message.answer(
         translator.get("menu"),
@@ -30,11 +31,11 @@ async def restart_handler(
     )
 
 
-@seller_router.message(F.text=="Tovar sotish")
+@seller_router.message(F.text == "Tovar sotish")
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
 ):
     await state.set_state(CategoryGroup.price)
 
@@ -46,11 +47,10 @@ async def process_registration(
 
 @seller_router.message(F.text.isdigit(), CategoryGroup.price)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
 ):
-
     await state.update_data({
         'price': int(message.text),
     })
@@ -64,11 +64,11 @@ async def process_registration(
 
 @seller_router.message(F.text.in_({"Tasdiqlash", "Bekor qilish", "Menyuga qaytish"}), CategoryGroup.confirm)
 async def process_registration(
-    message: Message, 
-    state: FSMContext,
-    db: Database,
-    translator: LocalizedTranslator,
-    bot: Bot
+        message: Message,
+        state: FSMContext,
+        db: Database,
+        translator: LocalizedTranslator,
+        bot: Bot
 ):
     if message.text != "Tasdiqlash":
         await message.answer(
@@ -124,7 +124,7 @@ async def process_registration(
 
 #     return await message.answer(
 #         translator.get("sum_of_cashback", price=price_formatter(sum_of_cashbacks))
-    # )
+# )
 
 
 # @seller_router.message(F.text=="Keshbeklar tarixi")
@@ -140,35 +140,35 @@ async def process_registration(
 #     )
 
 
-@seller_router.message(F.text=="Barcha sotuvlar")
+@seller_router.message(F.text == "Barcha sotuvlar")
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     products = await db.product.get_sold_products(message.from_user.id)
 
     if not products:
         return await message.answer(translator.get("not_sold_yet"))
-    
+
     formatted_data = "\n".join([
-        f"{num}. {price_formatter(product.price)} chek\nID: {product.check_id}, {date_formatter(str(product.created_at))}" 
-            for num, product in enumerate(products, start=1)
+        f"{num}. {price_formatter(product.price)} chek\nID: {product.check_id}, {date_formatter(str(product.created_at))}"
+        for num, product in enumerate(products, start=1)
     ])
 
-    await message.answer(formatted_data) 
+    await message.answer(formatted_data)
 
 
 @seller_router.message(CashbackHistoryGroup.step1)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     delta = lambda x: datetime.utcnow() - timedelta(days=x)
-    
+
     # TODO add check for empty list
     if message.text.startswith("Oxirgi") and len(message.text.split()) == 3:
         words = message.text.split()
@@ -178,35 +178,35 @@ async def process_registration(
 
             if not cashbacks:
                 return await message.answer(translator.get("no_cashbacks"))
-            
+
             formatted_data = "\n".join([
-                f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
-                    for num, cashback in enumerate(cashbacks, start=1)
+                f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}"
+                for num, cashback in enumerate(cashbacks, start=1)
             ])
             print("len cashbacks: ", len(cashbacks))
-            await message.answer(formatted_data) 
+            await message.answer(formatted_data)
 
     elif message.text == "Barcha sotuvlar":
         products = await db.product.get_sold_products(message.from_user.id)
 
         if not products:
             return await message.answer(translator.get("not_sold_yet"))
-        
+
         formatted_data = "\n".join([
-            f"{num}. {price_formatter(product.price)} chek\nID: {product.check_id}, {date_formatter(str(product.created_at))}" 
-                for num, product in enumerate(products, start=1)
+            f"{num}. {price_formatter(product.price)} chek\nID: {product.check_id}, {date_formatter(str(product.created_at))}"
+            for num, product in enumerate(products, start=1)
         ])
-        await message.answer(formatted_data) 
+        await message.answer(formatted_data)
 
     elif message.text == "Barcha xaridlar":
         cashbacks = await db.cashback.get_last_cashbacks(message.from_user.id)
         formatted_data = "\n".join([
-            f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
-                for num, cashback in enumerate(cashbacks, start=1)
+            f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}"
+            for num, cashback in enumerate(cashbacks, start=1)
         ])
         print("len cashbacks: ", len(cashbacks))
-        await message.answer(formatted_data) 
-    
+        await message.answer(formatted_data)
+
     elif message.text == "Menyuga qaytish":
         await message.answer(
             translator.get("category"),
@@ -215,11 +215,11 @@ async def process_registration(
         await state.clear()
 
 
-@seller_router.message(F.text=="Menyuga qaytish")
+@seller_router.message(F.text == "Menyuga qaytish")
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
 ):
     await message.answer(
         translator.get("category"),
@@ -228,22 +228,22 @@ async def process_registration(
     await state.clear()
 
 
-@seller_router.message(F.text=="Aloqa")
+@seller_router.message(F.text == "Aloqa")
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
 ):
     return await message.answer(
         translator.get("contacts")
     )
 
 
-@seller_router.message(F.text=="Feedback")
+@seller_router.message(F.text == "Feedback")
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
 ):
     await state.set_state(FeedbackGroup.message)
     return await message.answer(
@@ -254,10 +254,10 @@ async def process_registration(
 
 @seller_router.message(FeedbackGroup.message)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await db.feedback.new(
         message=message.text,
@@ -274,26 +274,26 @@ async def process_registration(
 
 @seller_router.message(F.text.in_({"Sozlamalar", "Sozlamalarga qaytish"}))
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await state.set_state(SettingsGroup.option)
 
     me = await db.seller.get_me(message.from_user.id)
     return await message.answer(
         translator.get("seller_info", fullname=me.fullname, region=me.region),
-            reply_markup=common.show_settings()
+        reply_markup=common.show_settings()
     )
 
 
 @seller_router.message(F.text == "Ism o'zgartirish", SettingsGroup.option)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await state.set_state(SettingsGroup.name)
     await message.answer(
@@ -304,10 +304,10 @@ async def process_registration(
 
 @seller_router.message(SettingsGroup.name)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await db.seller.edit(
         user_id=message.from_user.id,
@@ -324,10 +324,10 @@ async def process_registration(
 
 @seller_router.message(F.text == "Hududni o'zgartirish", SettingsGroup.option)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await state.set_state(SettingsGroup.region)
     await message.answer(
@@ -338,10 +338,10 @@ async def process_registration(
 
 @seller_router.message(SettingsGroup.region)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
-    translator: LocalizedTranslator,
-    db: Database,
+        message: Message,
+        state: FSMContext,
+        translator: LocalizedTranslator,
+        db: Database,
 ):
     await db.seller.edit(
         user_id=message.from_user.id,

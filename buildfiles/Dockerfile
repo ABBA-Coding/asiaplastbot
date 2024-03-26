@@ -18,7 +18,7 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /app
 COPY ../poetry.lock pyproject.toml ./
-
+RUN mkdir -p /app/src/media/images/
 RUN poetry check && \
     poetry install --no-interaction --no-cache --no-root
 
