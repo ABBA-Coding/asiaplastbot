@@ -83,7 +83,7 @@ async def process_registration(
         me = await bot.me()
         random_number = random.randint(10000000, 99999999)
         img = qrcode.make(f"https://t.me/{me.username}?start={random_number}")
-        img_path = conf.MEDIA_URL / f"images/{random_number}.png"
+        img_path = conf.IMAGE_DIR / f"{random_number}.png"
         img.save(str(img_path))
 
         image_from_pc = FSInputFile(img_path)
