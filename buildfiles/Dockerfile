@@ -1,4 +1,4 @@
-FROM python:3.10-slim as python-base
+FROM docker.io/python:3.11.7-slim-bookworm as python-base
 
 ENV POETRY_VERSION=1.5.1 \
     POETRY_HOME=/opt/poetry \
@@ -18,7 +18,7 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /app
 COPY ../poetry.lock pyproject.toml ./
-
+RUN mkdir -p /app/src/media/images/
 RUN poetry check && \
     poetry install --no-interaction --no-cache --no-root
 
