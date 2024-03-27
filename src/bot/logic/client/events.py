@@ -65,9 +65,9 @@ async def process_registration(
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-        cashback = product.price / 100
+        cashback = (product.price / 100) * 4
         all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
-        sum_of_cashbacks = (sum(all_data) + product.price) / 100
+        sum_of_cashbacks = ((sum(all_data) + product.price) / 100) * 4
 
         await message.answer(
             f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
@@ -101,7 +101,7 @@ async def process_registration(
     db: Database
 ):
     all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
-    sum_of_cashbacks = sum(all_data) / 100
+    sum_of_cashbacks = (sum(all_data) / 100) * 4
 
     return await message.answer(
         translator.get("sum_of_cashback", price=price_formatter(sum_of_cashbacks))
