@@ -1,23 +1,17 @@
-import random, qrcode
-
 from datetime import datetime, timedelta
-from sqlalchemy.exc import IntegrityError
 
 from aiogram import Bot
 from aiogram import F, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.filters import CommandStart
 
-
-from src.cache import Cache
 from src.configuration import conf
 from src.db.database import Database
-from src.language.translator import LocaleScheme, LocalizedTranslator
-from src.bot.filters.register_filter import ClientFilter
+from src.language.translator import LocalizedTranslator
 from .router import client_router
 from ...utils.formatters import price_formatter, date_formatter
-from ...structures.fsm.category import CategoryGroup, CashbackHistoryGroup, SettingsGroup, FeedbackGroup
+from ...structures.fsm.category import CashbackHistoryGroup
 from ...structures.keyboards import common
 
 
@@ -35,7 +29,7 @@ async def process_registration(
 
     cashback = await db.cashback.get_cashback_by_client_id_and_check_id(message.from_user.id, check_id)
     if cashback:
-        return message.answer("Siz ushbu tovarni harid qilgansiz")
+        return message.answer(translator.get("purchased"))
 
     if check_id:
         seller_id = product.seller_id
@@ -70,9 +64,12 @@ async def process_registration(
         sum_of_cashbacks = ((sum(all_data) + product.price) / 100) * 4
 
         await message.answer(
-            f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
-            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)} so'm",
-            reply_markup=common.client_category()
+            translator.get(
+                "cashback_info",
+                price=price_formatter(cashback),
+                sum_of_cashbacks=price_formatter(sum_of_cashbacks)
+            ),
+            reply_markup=common.client_category(translator)
         )
 
         await db.cashback.new(
@@ -88,13 +85,13 @@ async def process_registration(
     else:
         await message.answer(
             translator.get("menu"),
-            reply_markup=common.client_category()
+            reply_markup=common.client_category(translator)
         )
         
     await state.clear()
 
 
-@client_router.message(F.text=="Mening keshbeklarim")
+@client_router.message(F.text.in_({"Mening keshbeklarim", "Мои кэшбэки"}))
 async def process_registration(
     message: Message, 
     translator: LocalizedTranslator,
@@ -108,7 +105,7 @@ async def process_registration(
     )
 
 
-@client_router.message(F.text=="Keshbeklar tarixi")
+@client_router.message(F.text.in_({"Keshbeklar tarixi", "История кэшбэков"}))
 async def process_registration(
     message: Message, 
     state: FSMContext, 
@@ -117,7 +114,7 @@ async def process_registration(
     await state.set_state(CashbackHistoryGroup.step1)
     return await message.answer(
         translator.get("cashback_history_period"),
-        reply_markup=common.cashback_history()
+        reply_markup=common.cashback_history(translator)
     )
 
 
@@ -130,8 +127,8 @@ async def process_registration(
 ):
     delta = lambda x: datetime.utcnow() - timedelta(days=x)
     
-    # TODO add check for empty list
-    if message.text.startswith("Oxirgi") and len(message.text.split()) == 3:
+    target = translator.get("last")
+    if message.text.startswith(target) and len(message.text.split()) == 3:
         words = message.text.split()
         if words[1].isdigit():
             x_days_ago = delta(int(words[1]))
@@ -147,7 +144,7 @@ async def process_registration(
             print("len cashbacks: ", len(cashbacks))
             await message.answer(formatted_data) 
 
-    elif message.text == "Barcha xaridlar":
+    elif message.text == translator.get("Barcha_xaridlar"):
         cashbacks = await db.cashback.get_last_cashbacks(message.from_user.id)
         formatted_data = "\n".join([
             f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
@@ -155,15 +152,15 @@ async def process_registration(
         ])
         await message.answer(formatted_data) 
     
-    elif message.text == "Menyuga qaytish":
+    elif message.text == translator.get("Menyuga_qaytish"):
         await message.answer(
             translator.get("category"),
-            reply_markup=common.client_category()
+            reply_markup=common.client_category(translator)
         )
         await state.clear()
 
 
-@client_router.message(F.text=="Menyuga qaytish")
+@client_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню"}))
 async def process_registration(
     message: Message, 
     state: FSMContext, 
@@ -171,6 +168,6 @@ async def process_registration(
 ):
     await message.answer(
         translator.get("category"),
-        reply_markup=common.client_category()
+        reply_markup=common.client_category(translator)
     )
     await state.clear()

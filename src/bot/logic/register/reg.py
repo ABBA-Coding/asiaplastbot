@@ -109,8 +109,11 @@ async def process_registration(
         sum_of_cashbacks = (sum(all_data) + data.get("price")) / 100
 
         await message.answer(
-            f"Keshbek summasiga {price_formatter(cashback)} so'm qo'shildi. "
-            f"Hozirda umumiy keshbek summasi: {price_formatter(sum_of_cashbacks)} so'm",
+            translator.get(
+                "cashback_info",
+                price=price_formatter(cashback),
+                sum_of_cashbacks=price_formatter(sum_of_cashbacks)
+            ),
             reply_markup=common.client_category()
         )
 
@@ -133,12 +136,15 @@ async def process_registration(
     await state.set_state(RegisterGroup.region)
     return await message.answer(
         translator.get("region"),
-        reply_markup=common.show_regions()[0]
+        reply_markup=common.show_regions(translator)[0]
     )
 
 
-@register_router.message(F.text.in_(common.show_regions()[1]), RegisterGroup.region)
+@register_router.message(RegisterGroup.region)
 async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator, db: Database):
+    if message.text not in common.show_regions(translator)[1]:
+        return await message.answer(translator.get("choose_from_list"))
+
     await state.update_data({
         'region': message.text
     })

@@ -38,3 +38,63 @@ congrats =  Siz aksiya ishtirokchisiga aylandingiz!!!
             Xarid summasi: { $price } so'm
             Xarid ID si: { NUMBER( $check_id, useGrouping: 0 ) }
             Aksiyada yutish imkoniyatini ko'paytirish uchun yana ASIA Plast mahsulotlaridan xarid qiling.
+
+
+Toshkent = Toshkent
+Namangan_viloyati = Namangan viloyati
+Andijon_viloyati = Andijon viloyati
+Buxoro_viloyati = Buxoro viloyati
+Jizzax_viloyati = Jizzax viloyati
+Qashqadaryo_viloyati = Qashqadaryo viloyati
+Navoi_viloyati = Navoi viloyati
+Samarqand_viloyati = Samarqand viloyati
+Surxondaryo_viloyati = Surxondaryo viloyati
+Sirdaryo_viloyati = Sirdaryo viloyati
+Fargona_viloyati = Farg'ona viloyati
+Xorazm_viloyati = Xorazm viloyati
+Qoraqalpogiston_Respublikasi = Qoraqalpog'iston Respublikasi
+
+
+Tovar_sotish = Tovar sotish
+Barcha_sotuvlar = Barcha sotuvlar
+Aloqa = Aloqa
+Feedback = Feedback
+Sozlamalar = Sozlamalar
+
+
+Mening_keshbeklarim = Mening keshbeklarim
+Keshbeklar_tarixi = Keshbeklar tarixi
+
+
+Tasdiqlash = Tasdiqlash
+Bekor_qilish = Bekor qilish
+Menyuga_qaytish = Menyuga qaytish
+
+last = Oxirgi
+
+Oxirgi_5_kun = Oxirgi 5 kun
+Oxirgi_10_kun = Oxirgi 10 kun
+Oxirgi_30_kun = Oxirgi 30 kun
+Oxirgi_60_kun = Oxirgi 60 kun
+Oxirgi_90_kun = Oxirgi 90 kun
+Barcha_xaridlar = Barcha xaridlar
+
+
+Ism_ozgartirish = Ism o'zgartirish
+Hududni_ozgartirish = Hududni o'zgartirish
+
+Sozlamalarga_qaytish = Sozlamalarga qaytish
+
+
+purchased = Siz ushbu tovarni harid qilgansiz
+
+
+cashback_info = Keshbek summasiga { $price } so'm qo'shildi.
+                Hozirda umumiy keshbek summasi: { $sum_of_cashbacks } so'm
+
+
+choose_from_list = Iltimos ro'yhatdan birini tanlang!
+
+
+purchase_check =    { $price } so'mlik xarid cheki
+                    ID: {NUMBER( $random_number, useGrouping: 0 )}
