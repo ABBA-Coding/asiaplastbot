@@ -36,7 +36,7 @@ class Cashback(Base):
     
     @property
     def cashback_sum(self) -> int:
-        return price_formatter(self.price / 100)
+        return price_formatter((self.price / 100) * 4)
     
     @property
     def client_phone_number(self) -> str:

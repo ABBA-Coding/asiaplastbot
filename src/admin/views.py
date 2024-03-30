@@ -19,6 +19,7 @@ class UserAdmin(ModelView, model=User):
     can_delete = False
     icon = "fa-solid fa-users"
     name_plural = "Foydalanuvchilar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -38,6 +39,7 @@ class SellerAdmin(ModelView, model=Seller):
     can_delete = False
     icon = "fa-solid fa-users"
     name_plural = "Sotuvchilar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -54,6 +56,7 @@ class AllowedSellerAdmin(ModelView, model=AllowedSeller):
 
     icon = "fa-solid fa-user-plus"
     name_plural = "Sotuvchi qo'shish"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -71,6 +74,7 @@ class ClientAdmin(ModelView, model=Client):
     
     icon = "fa-solid fa-users"
     name_plural = "Klientlar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -94,6 +98,7 @@ class ProductAdmin(ModelView, model=Product):
 
     icon = "fa-solid fa-store"
     name_plural = "Tovarlar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -108,6 +113,7 @@ class PurchaseAdmin(ModelView, model=Purchase):
     ]
     icon = "fa-solid fa-cart-shopping"
     name_plural = "Haridlar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -126,6 +132,7 @@ class CashbackAdmin(ModelView, model=Cashback):
     can_create = False
     icon = "fa-solid fa-money-check-dollar"
     name_plural = "Keshbeklar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
@@ -141,6 +148,7 @@ class FeedbackAdmin(ModelView, model=Feedback):
 
     icon = "fa-solid fa-comment"
     name_plural = "Fikrlar"
+    page_size = 100
     
     def is_visible(self, request: Request) -> bool:
         return True
