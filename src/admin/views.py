@@ -36,7 +36,7 @@ class SellerAdmin(ModelView, model=Seller):
     ]
     column_searchable_list = [Seller.fullname]
     can_create = False
-    can_delete = False
+    can_delete = True
     icon = "fa-solid fa-users"
     name_plural = "Sotuvchilar"
     page_size = 100

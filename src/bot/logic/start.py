@@ -38,6 +38,7 @@ async def start_handler(message: types.Message, db: Database, translator: Locali
         product = await db.product.get_product_by_check_id(int(texts[1]))
 
         if product:
+            print(texts[1])
             await state.update_data({
                 'deep_link': int(texts[1]),
                 'product_id': product.id,

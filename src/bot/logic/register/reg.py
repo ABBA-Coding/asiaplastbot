@@ -114,7 +114,7 @@ async def process_registration(
                 price=price_formatter(cashback),
                 sum_of_cashbacks=price_formatter(sum_of_cashbacks)
             ),
-            reply_markup=common.client_category()
+            reply_markup=common.client_category(translator)
         )
 
         await db.cashback.new(
@@ -163,5 +163,5 @@ async def process_registration(message: Message, state: FSMContext, translator: 
 
     return await message.answer(
         translator.get("category"),
-        reply_markup=common.category()
+        reply_markup=common.category(translator)
     )
