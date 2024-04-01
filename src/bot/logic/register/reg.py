@@ -104,9 +104,9 @@ async def process_registration(
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-        cashback = data.get("price") / 100
+        cashback = (data.get("price") / 100) * 4
         all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
-        sum_of_cashbacks = (sum(all_data) + data.get("price")) / 100
+        sum_of_cashbacks = ((sum(all_data) + data.get("price")) / 100) * 4
 
         await message.answer(
             translator.get(
