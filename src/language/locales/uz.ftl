@@ -37,7 +37,7 @@ thank_you_for_feedback = Bildirgan fikringiz uchun raxmat!
 congrats =  Siz aksiya ishtirokchisiga aylandingiz!!!
             Xarid summasi: { $price } so'm
             Xarid ID si: { NUMBER( $check_id, useGrouping: 0 ) }
-            Aksiyada yutish imkoniyatini ko'paytirish uchun yana ASIA Plast mahsulotlaridan xarid qiling.
+            Keshbek summasini oshirish uchun yana Asia Plast mahsulotlarini harid qiling!
 
 
 Toshkent = Toshkent

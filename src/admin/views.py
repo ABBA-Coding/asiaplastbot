@@ -128,7 +128,7 @@ class CashbackAdmin(ModelView, model=Cashback):
         Cashback.status, "client_phone_number",
         Cashback.client, Cashback.created_at, 
     ]
-    column_searchable_list = [Cashback.client]
+    column_searchable_list = ["client.phone_number"]
     
     can_create = False
     icon = "fa-solid fa-money-check-dollar"
