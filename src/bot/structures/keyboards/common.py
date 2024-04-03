@@ -105,6 +105,7 @@ def cashback_history(translator: LocalizedTranslator):
         # [types.KeyboardButton(text="Barcha sotuvlar")],
         [types.KeyboardButton(text=translator.get("Barcha_xaridlar"))],
         [types.KeyboardButton(text=translator.get("Menyuga_qaytish"))],
+        [types.KeyboardButton(text=translator.get("back"))],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
@@ -132,6 +133,7 @@ def show_settings(translator: LocalizedTranslator):
     kb = [
         [types.KeyboardButton(text=translator.get("Ism_ozgartirish"))],
         [types.KeyboardButton(text=translator.get("Hududni_ozgartirish"))],
+        [types.KeyboardButton(text=translator.get("back"))],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
@@ -142,6 +144,7 @@ def back_to_settings(translator: LocalizedTranslator):
     kb = [
         [types.KeyboardButton(text=translator.get("Sozlamalarga_qaytish"))],
         [types.KeyboardButton(text=translator.get("Menyuga_qaytish"))],
+        [types.KeyboardButton(text=translator.get("back"))],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 

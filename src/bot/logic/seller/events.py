@@ -137,7 +137,7 @@ async def process_registration(
     await message.answer(formatted_data)
 
 
-@seller_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню"}))
+@seller_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню", "Orqaga", "Назад"}))
 async def process_registration(
         message: Message,
         state: FSMContext,

@@ -152,7 +152,7 @@ async def process_registration(
         ])
         await message.answer(formatted_data) 
     
-    elif message.text == translator.get("Menyuga_qaytish"):
+    elif message.text == translator.get("Menyuga_qaytish") or message.text == translator.get("back"):
         await message.answer(
             translator.get("category"),
             reply_markup=common.client_category(translator)
@@ -160,7 +160,7 @@ async def process_registration(
         await state.clear()
 
 
-@client_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню"}))
+@client_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню", "Orqaga", "Назад"}))
 async def process_registration(
     message: Message, 
     state: FSMContext, 

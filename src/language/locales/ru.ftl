@@ -98,3 +98,5 @@ choose_from_list = Пожалуйста, выберите один из спис
 
 purchase_check =    Квитанция о покупке в сумме { $price }
                     ID: { $random_number }
+
+back = Назад

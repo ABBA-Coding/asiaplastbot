@@ -98,3 +98,5 @@ choose_from_list = Iltimos ro'yhatdan birini tanlang!
 
 purchase_check =    { $price } so'mlik xarid cheki
                     ID: {NUMBER( $random_number, useGrouping: 0 )}
+
+back = Orqaga
