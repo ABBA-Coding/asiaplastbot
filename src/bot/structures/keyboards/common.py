@@ -95,6 +95,15 @@ def back_to_menu(translator: LocalizedTranslator):
     return keyboard
 
 
+def back_btn(translator):
+    kb = [
+        [types.KeyboardButton(text=translator.get("back"))],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+
+    return keyboard
+
+
 def cashback_history(translator: LocalizedTranslator):
     kb = [
         [types.KeyboardButton(text=translator.get("Oxirgi_5_kun"))],

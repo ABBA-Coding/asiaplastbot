@@ -41,7 +41,7 @@ async def process_registration(
 
     return await message.answer(
         translator.get("price"),
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=common.back_btn(translator)
     )
 
 
