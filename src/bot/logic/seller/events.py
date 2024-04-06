@@ -170,7 +170,7 @@ async def process_registration(
     await state.set_state(FeedbackGroup.message)
     return await message.answer(
         translator.get("feedback"),
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=common.back_btn()
     )
 
 
