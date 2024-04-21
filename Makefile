@@ -50,11 +50,11 @@ requirements:
 # Alembic utils
 .PHONY: generate
 generate:
-	poetry run alembic revision --m="$(NAME)" --autogenerate
+	poetry run python -m alembic revision --m="$(NAME)" --autogenerate
 
 .PHONY: migrate
 migrate:
-	poetry run alembic upgrade head
+	poetry run python -m alembic upgrade head
 
 # Docker utils
 .PHONY: project-start

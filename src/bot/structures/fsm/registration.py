@@ -6,3 +6,5 @@ class RegisterGroup(StatesGroup):
     fullname = State()
     phone_number = State()
     region = State()
+
+    receive_cashback_id = State()

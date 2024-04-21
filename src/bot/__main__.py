@@ -14,7 +14,7 @@ from src.language.translator import Translator
 
 async def start_bot():
     """This function will start bot with polling mode."""
-    bot = Bot(token=conf.bot.token)
+    bot = Bot(token=conf.bot.token, parse_mode='html')
     cache = Cache()
     storage = get_redis_storage(
         redis=Redis(

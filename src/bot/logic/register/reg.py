@@ -67,10 +67,18 @@ async def process_registration(
     data = await state.get_data()
     deep_link = data.get("deep_link")
     allowed_sellers = await db.allowed.get_allowed_sellers()
-    seller_id = data.get("seller_id")
-    seller = await db.seller.get_me(user_id=seller_id)
     
     if deep_link:
+        try:
+            product = await db.product.get_product_by_check_id(deep_link)
+            seller = await db.seller.get_me(user_id=product.seller_id)
+        except AttributeError:
+            await state.set_state(RegisterGroup.receive_cashback_id)
+            return await message.answer(
+                translator.get("send_cashback_code"),
+                reply_markup=types.ReplyKeyboardRemove()
+            )
+    
         product = await db.product.get_product_by_check_id(deep_link)
         await db.product.edit(
             check_id=deep_link,
@@ -82,7 +90,7 @@ async def process_registration(
             fullname=data.get("fullname"),
             phone_number=data.get("phone_number"),
             language=data.get("language"),
-            product_id=data.get("product_id"),
+            product_id=product.id,
         )
 
         await db.purchase.new(
@@ -104,9 +112,9 @@ async def process_registration(
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-        cashback = (data.get("price") / 100) * 4
+        cashback = (product.price / 100) * 4
         all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
-        sum_of_cashbacks = ((sum(all_data) + data.get("price")) / 100) * 4
+        sum_of_cashbacks = ((sum(all_data) + product.price) / 100) * 4
 
         await message.answer(
             translator.get(
@@ -118,27 +126,95 @@ async def process_registration(
         )
 
         await db.cashback.new(
-            price=data.get("price"),
+            price=product.price,
             check_id=product.check_id,
             status=False,
             client_id=message.from_user.id
         )
         
         await db.session.commit()
-        return
 
-    elif phone_number not in allowed_sellers:
+    elif phone_number in allowed_sellers:
+        await state.set_state(RegisterGroup.region)
         return await message.answer(
-            translator.get("not_in_sellers"),
-            reply_markup = types.ReplyKeyboardRemove()
+            translator.get("region"),
+            reply_markup=common.show_regions(translator)[0]
         )
 
-    await state.set_state(RegisterGroup.region)
-    return await message.answer(
-        translator.get("region"),
-        reply_markup=common.show_regions(translator)[0]
+    else:
+        await state.set_state(RegisterGroup.receive_cashback_id)
+        return await message.answer(
+            translator.get("send_cashback_code"), 
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+
+
+@register_router.message(RegisterGroup.receive_cashback_id)
+async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator, db: Database):
+    data = await state.get_data()
+    print(message.text)
+
+    try:
+        cashback_id = int(message.text)
+        product = await db.product.get_product_by_check_id(cashback_id)
+        seller = await db.seller.get_me(user_id=product.seller_id)
+    except (AttributeError, ValueError):
+        return await message.answer(translator.get("incorrect_id"))
+
+    await db.product.edit(
+        check_id=cashback_id,
+        status=True
     )
 
+    await db.client.add_or_update(
+        user_id=message.from_user.id,
+        fullname=data.get("fullname"),
+        phone_number=data.get("phone_number"),
+        language=data.get("language"),
+        product_id=product.id,
+    )
+
+    await db.purchase.new(
+        product_id=product.id,
+        client_id=message.from_user.id,
+        region=seller.region,
+    )
+
+    logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
+
+    image_from_pc = types.FSInputFile(logo_path)
+    logo_img = await message.answer_photo(
+        image_from_pc,
+        caption=translator.get(
+            "congrats", 
+            price=price_formatter(product.price),
+            check_id=product.check_id
+        ),
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+
+    cashback = (product.price / 100) * 4
+    all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
+    sum_of_cashbacks = ((sum(all_data) + product.price) / 100) * 4
+
+    await message.answer(
+        translator.get(
+            "cashback_info",
+            price=price_formatter(cashback),
+            sum_of_cashbacks=price_formatter(sum_of_cashbacks)
+        ),
+        reply_markup=common.client_category(translator)
+    )
+
+    await db.cashback.new(
+        price=product.price,
+        check_id=product.check_id,
+        status=False,
+        client_id=message.from_user.id
+    )
+    
+    await db.session.commit()
+    
 
 @register_router.message(RegisterGroup.region)
 async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator, db: Database):
