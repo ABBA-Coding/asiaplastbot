@@ -64,6 +64,7 @@ Sozlamalar = Настройки
 
 Mening_keshbeklarim = Мои кэшбэки
 Keshbeklar_tarixi = История кэшбэков
+Keshbek_id = Ввести id кэшбэка
 
 
 Tasdiqlash = Подтверждать
@@ -87,7 +88,7 @@ Hududni_ozgartirish = Изменить область
 Sozlamalarga_qaytish = Настройки
 
 
-purchased = Вы уже купили этот товар
+already_purchased = Вы уже купили этот товар
 
 
 cashback_info = К сумме кэшбэка добавлена { $price } сумов.

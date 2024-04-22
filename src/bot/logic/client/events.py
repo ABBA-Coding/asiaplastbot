@@ -12,13 +12,14 @@ from src.language.translator import LocalizedTranslator
 from .router import client_router
 from ...utils.formatters import price_formatter, date_formatter
 from ...structures.fsm.category import CashbackHistoryGroup
+from ...structures.fsm.registration import RegisterGroup
 from ...structures.keyboards import common
 
 
 @client_router.message(CommandStart())
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
+    message: Message,
+    state: FSMContext,
     translator: LocalizedTranslator,
     db: Database,
     bot: Bot
@@ -28,8 +29,9 @@ async def process_registration(
     product = await db.product.get_product_by_check_id(check_id)
 
     cashback = await db.cashback.get_cashback_by_client_id_and_check_id(message.from_user.id, check_id)
+
     if cashback:
-        return message.answer(translator.get("purchased"))
+        return message.answer(translator.get("already_purchased"))
 
     if check_id:
         seller_id = product.seller_id
@@ -52,7 +54,7 @@ async def process_registration(
         logo_img = await message.answer_photo(
             image_from_pc,
             caption=translator.get(
-                "congrats", 
+                "congrats",
                 price=price_formatter(product.price),
                 check_id=product.check_id
             ),
@@ -78,7 +80,7 @@ async def process_registration(
             status=False,
             client_id=message.from_user.id
         )
-        
+
         await db.session.commit()
         return
 
@@ -87,13 +89,13 @@ async def process_registration(
             translator.get("menu"),
             reply_markup=common.client_category(translator)
         )
-        
+
     await state.clear()
 
 
 @client_router.message(F.text.in_({"Mening keshbeklarim", "Мои кэшбэки"}))
 async def process_registration(
-    message: Message, 
+    message: Message,
     translator: LocalizedTranslator,
     db: Database
 ):
@@ -107,8 +109,8 @@ async def process_registration(
 
 @client_router.message(F.text.in_({"Keshbeklar tarixi", "История кэшбэков"}))
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
+    message: Message,
+    state: FSMContext,
     translator: LocalizedTranslator,
 ):
     await state.set_state(CashbackHistoryGroup.step1)
@@ -118,15 +120,107 @@ async def process_registration(
     )
 
 
+@client_router.message(F.text.in_({"Keshbek id-sini kiritish", "Ввести id кэшбэка"}))
+async def process_registration(
+    message: Message,
+    state: FSMContext,
+    translator: LocalizedTranslator,
+):
+    await state.set_state(RegisterGroup.receive_cashback_id)
+    return await message.answer(
+        translator.get("send_cashback_code"),
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+
+
+@client_router.message(RegisterGroup.receive_cashback_id)
+async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator, db: Database):
+    data = await state.get_data()
+
+    if message.text == "Orqaga" or message.text == "Назад":
+        await state.clear()
+        return await message.answer(
+            translator.get("category"),
+            reply_markup=common.client_category(translator)
+        )
+
+    try:
+        cleaned_string = message.text.replace('\u2068', '').replace('\u2069', '')
+        cashback_id = int(cleaned_string)
+
+        # cashback_id = int(message.text)
+        product = await db.product.get_product_by_check_id(cashback_id)
+        seller = await db.seller.get_me(user_id=product.seller_id)
+    except (AttributeError, ValueError):
+        return await message.answer(
+            translator.get("incorrect_id"), 
+            reply_markup=common.back_btn(translator=translator)
+        )
+
+    await db.product.edit(
+        check_id=cashback_id,
+        status=True
+    )
+
+    try:
+        await db.cashback.new(
+            price=product.price,
+            check_id=product.check_id,
+            status=False,
+            client_id=message.from_user.id
+        )
+
+        await db.purchase.new(
+            product_id=product.id,
+            client_id=message.from_user.id,
+            region=seller.region,
+        )
+
+    except Exception as e:
+        return message.answer(
+            translator.get("already_purchased"), 
+            reply_markup=common.back_btn(translator=translator)
+        )
+
+    logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
+
+    image_from_pc = types.FSInputFile(logo_path)
+    logo_img = await message.answer_photo(
+        image_from_pc,
+        caption=translator.get(
+            "congrats",
+            price=price_formatter(product.price),
+            check_id=product.check_id
+        ),
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+
+    cashback = (product.price / 100) * 4
+    all_data = await db.cashback.get_cashbacks_by_client_id(client_id=message.from_user.id)
+    sum_of_cashbacks = ((sum(all_data) + product.price) / 100) * 4
+
+    await message.answer(
+        translator.get(
+            "cashback_info",
+            price=price_formatter(cashback),
+            sum_of_cashbacks=price_formatter(sum_of_cashbacks)
+        ),
+        reply_markup=common.client_category(translator)
+    )
+
+    await db.session.commit()
+    await state.clear()
+
+
 @client_router.message(CashbackHistoryGroup.step1)
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
+    message: Message,
+    state: FSMContext,
     translator: LocalizedTranslator,
     db: Database,
 ):
-    delta = lambda x: datetime.utcnow() - timedelta(days=x)
-    
+    def delta(x): return datetime.utcnow() - timedelta(days=x)
+
     target = translator.get("last")
     if message.text.startswith(target) and len(message.text.split()) == 3:
         words = message.text.split()
@@ -136,22 +230,22 @@ async def process_registration(
 
             if not cashbacks:
                 return await message.answer(translator.get("no_cashbacks"))
-            
+
             formatted_data = "\n".join([
-                f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
-                    for num, cashback in enumerate(cashbacks, start=1)
+                f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}"
+                for num, cashback in enumerate(cashbacks, start=1)
             ])
             print("len cashbacks: ", len(cashbacks))
-            await message.answer(formatted_data) 
+            await message.answer(formatted_data)
 
     elif message.text == translator.get("Barcha_xaridlar"):
         cashbacks = await db.cashback.get_last_cashbacks(message.from_user.id)
         formatted_data = "\n".join([
-            f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}" 
-                for num, cashback in enumerate(cashbacks, start=1)
+            f"{num}. {price_formatter(cashback.price)} chek\nID: {cashback.check_id}, {date_formatter(str(cashback.created_at))}"
+            for num, cashback in enumerate(cashbacks, start=1)
         ])
-        await message.answer(formatted_data) 
-    
+        await message.answer(formatted_data)
+
     elif message.text == translator.get("Menyuga_qaytish") or message.text == translator.get("back"):
         await message.answer(
             translator.get("category"),
@@ -162,8 +256,8 @@ async def process_registration(
 
 @client_router.message(F.text.in_({"Menyuga qaytish", "Вернуться в меню", "Orqaga", "Назад"}))
 async def process_registration(
-    message: Message, 
-    state: FSMContext, 
+    message: Message,
+    state: FSMContext,
     translator: LocalizedTranslator,
 ):
     await message.answer(

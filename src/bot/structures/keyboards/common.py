@@ -69,6 +69,7 @@ def client_category(translator: LocalizedTranslator):
     kb = [
         [types.KeyboardButton(text=translator.get("Mening_keshbeklarim"))],
         [types.KeyboardButton(text=translator.get("Keshbeklar_tarixi"))],
+        [types.KeyboardButton(text=translator.get("Keshbek_id"))],
     ]
     keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 

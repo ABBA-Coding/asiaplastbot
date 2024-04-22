@@ -133,6 +133,7 @@ async def process_registration(
         )
         
         await db.session.commit()
+        await state.clear()
 
     elif phone_number in allowed_sellers:
         await state.set_state(RegisterGroup.region)
@@ -214,6 +215,7 @@ async def process_registration(message: Message, state: FSMContext, translator: 
     )
     
     await db.session.commit()
+    await state.clear()
     
 
 @register_router.message(RegisterGroup.region)

@@ -64,6 +64,7 @@ Sozlamalar = Sozlamalar
 
 Mening_keshbeklarim = Mening keshbeklarim
 Keshbeklar_tarixi = Keshbeklar tarixi
+Keshbek_id = Keshbek id-sini kiritish
 
 
 Tasdiqlash = Tasdiqlash
@@ -86,7 +87,7 @@ Hududni_ozgartirish = Hududni o'zgartirish
 Sozlamalarga_qaytish = Sozlamalarga qaytish
 
 
-purchased = Siz ushbu tovarni harid qilgansiz
+already_purchased = Siz ushbu tovarni harid qilgansiz
 
 
 cashback_info = Keshbek summasiga { $price } so'm qo'shildi.
