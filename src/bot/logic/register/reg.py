@@ -153,33 +153,48 @@ async def process_registration(
 @register_router.message(RegisterGroup.receive_cashback_id)
 async def process_registration(message: Message, state: FSMContext, translator: LocalizedTranslator, db: Database):
     data = await state.get_data()
-    print(message.text)
 
     try:
-        cashback_id = int(message.text)
+        cleaned_string = message.text.replace('\u2068', '').replace('\u2069', '')
+        cashback_id = int(cleaned_string)
+
         product = await db.product.get_product_by_check_id(cashback_id)
         seller = await db.seller.get_me(user_id=product.seller_id)
     except (AttributeError, ValueError):
         return await message.answer(translator.get("incorrect_id"))
 
-    await db.product.edit(
-        check_id=cashback_id,
-        status=True
-    )
 
-    await db.client.add_or_update(
-        user_id=message.from_user.id,
-        fullname=data.get("fullname"),
-        phone_number=data.get("phone_number"),
-        language=data.get("language"),
-        product_id=product.id,
-    )
+    try:
+        await db.client.add_or_update(
+            user_id=message.from_user.id,
+            fullname=data.get("fullname"),
+            phone_number=data.get("phone_number"),
+            language=data.get("language"),
+            product_id=product.id,
+        )
 
-    await db.purchase.new(
-        product_id=product.id,
-        client_id=message.from_user.id,
-        region=seller.region,
-    )
+        await db.cashback.new(
+            price=product.price,
+            check_id=product.check_id,
+            status=False,
+            client_id=message.from_user.id
+        )
+
+        await db.purchase.new(
+            product_id=product.id,
+            client_id=message.from_user.id,
+            region=seller.region,
+        )
+
+        await db.product.edit(
+            check_id=cashback_id,
+            status=True
+        )
+    except Exception as e:
+        print(e)
+        return message.answer(
+            translator.get("already_purchased")
+        )
 
     logo_path = conf.MEDIA_URL / f"logo/logo.jpg"
 
@@ -205,13 +220,6 @@ async def process_registration(message: Message, state: FSMContext, translator: 
             sum_of_cashbacks=price_formatter(sum_of_cashbacks)
         ),
         reply_markup=common.client_category(translator)
-    )
-
-    await db.cashback.new(
-        price=product.price,
-        check_id=product.check_id,
-        status=False,
-        client_id=message.from_user.id
     )
     
     await db.session.commit()

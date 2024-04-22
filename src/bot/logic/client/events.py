@@ -177,6 +177,7 @@ async def process_registration(message: Message, state: FSMContext, translator: 
         )
 
     except Exception as e:
+        
         return message.answer(
             translator.get("already_purchased"), 
             reply_markup=common.back_btn(translator=translator)
